@@ -16,77 +16,68 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister }) => {
     e.preventDefault()
     setError('')
 
+    if (!email || !password) {
+      setError('Please fill in all fields')
+      return
+    }
+
     try {
       await login(email, password)
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message)
-      } else {
-        setError('Login failed')
-      }
+      setError(error instanceof Error ? error.message : 'Login failed')
     }
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-header">
-          <h2 className="auth-title">Welcome Back</h2>
-          <p className="auth-subtitle">Sign in to your account</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="auth-form">
-          {error && <div className="error-message">{error}</div>}
-          
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
-            <input
-              type="email"
-              id="email"
-              className="form-input"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              type="password"
-              id="password"
-              className="form-input"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="btn btn-primary auth-submit"
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div className="auth-footer">
-          <p>
-            Don't have an account?{' '}
-            <button
-              type="button"
-              className="auth-link"
-              onClick={onSwitchToRegister}
-            >
-              Sign up
-            </button>
-          </p>
-        </div>
+    <form onSubmit={handleSubmit} className="auth-form">
+      {error && <div className="error-message">{error}</div>}
+      
+      <div className="form-group">
+        <label htmlFor="email" className="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="form-input"
+          placeholder="Enter your email"
+          required
+        />
       </div>
-    </div>
+
+      <div className="form-group">
+        <label htmlFor="password" className="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="form-input"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="btn btn-primary"
+        disabled={loading}
+        style={{ width: '100%', marginBottom: '20px' }}
+      >
+        {loading ? 'Signing in...' : 'Sign In'}
+      </button>
+
+      <p className="auth-switch">
+        Don't have an account?{' '}
+        <button
+          type="button"
+          onClick={onSwitchToRegister}
+          className="auth-link"
+        >
+          Sign up
+        </button>
+      </p>
+    </form>
   )
 }
 

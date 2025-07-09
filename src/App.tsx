@@ -1,14 +1,11 @@
-import React, { useState } from 'react'
-import { useAuth } from './context/AuthContext'
+import React from 'react'
+import { AuthProvider } from './context/AuthProvider'
 import { TeamProvider } from './context/TeamProvider'
-import Login from './Components/auth/Login'
-import Register from './Components/auth/Register'
-import Board from './Components/Board'
-import Header from './Components/Header'
-import './App.css'
+import AuthPage from './Components/auth/AuthPage'
+import Dashboard from './Components/Dashboard'
+import { useAuth } from './context/AuthContext'
 
-const App: React.FC = () => {
-  const [showLogin, setShowLogin] = useState(true)
+const AppContent: React.FC = () => {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -20,27 +17,16 @@ const App: React.FC = () => {
     )
   }
 
-  if (!user) {
-    return (
-      <div className="app">
-        {showLogin ? (
-          <Login onSwitchToRegister={() => setShowLogin(false)} />
-        ) : (
-          <Register onSwitchToLogin={() => setShowLogin(true)} />
-        )}
-      </div>
-    )
-  }
+  return user ? <Dashboard /> : <AuthPage />
+}
 
+const App: React.FC = () => {
   return (
-    <TeamProvider>
-      <div className="app">
-        <Header />
-        <main className="main-content">
-          <Board />
-        </main>
-      </div>
-    </TeamProvider>
+    <AuthProvider>
+      <TeamProvider>
+        <AppContent />
+      </TeamProvider>
+    </AuthProvider>
   )
 }
 
