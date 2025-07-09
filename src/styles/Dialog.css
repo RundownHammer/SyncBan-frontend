@@ -1,0 +1,85 @@
+.add-tasks-dialog {
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(51, 65, 85, 0.98) 100%);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    padding: 0;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  
+  .add-tasks-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+  }
+  
+  .dialog-content {
+    padding: 32px;
+  }
+  
+  .dialog-header {
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .dialog-title {
+    color: #f1f5f9;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .form-textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+  }
+  
+  .form-select {
+    cursor: pointer;
+  }
+  
+  .form-select option {
+    background: #1e293b;
+    color: #f1f5f9;
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 600px) {
+    .add-tasks-dialog {
+      width: 95%;
+      margin: 20px auto;
+    }
+    
+    .dialog-content {
+      padding: 24px;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    
+    .dialog-title {
+      font-size: 1.25rem;
+    }
+  }

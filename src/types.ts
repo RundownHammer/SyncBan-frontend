@@ -38,7 +38,7 @@ export interface TaskProps {
 }
 
 export interface AddTasksProps {
-  addTask: (newItem: Cards) => void
+  addTask: (newItem: Omit<Cards, '_id'>) => void
 }
 
 // New interfaces for authentication and teams
