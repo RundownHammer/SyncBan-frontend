@@ -2,6 +2,7 @@ import React, { useState, useEffect, type ReactNode } from 'react'
 import { TeamContext } from './TeamContext'
 import type { TeamContextType, Team } from '../types'
 import { useAuth } from './AuthContext'
+import { API_BASE_URL } from '../config/api'
 
 interface TeamProviderProps {
   children: ReactNode
@@ -23,7 +24,7 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
     if (!token) return
 
     try {
-      const response = await fetch('http://localhost:5000/api/teams/my-team', {
+      const response = await fetch(`${API_BASE_URL}/api/teams/my-team`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -45,7 +46,7 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/teams/create', {
+      const response = await fetch(`${API_BASE_URL}/api/teams/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/teams/join', {
+      const response = await fetch(`${API_BASE_URL}/api/teams/join`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/teams/leave', {
+      const response = await fetch(`${API_BASE_URL}/api/teams/leave`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -130,7 +131,7 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/teams/regenerate-code', {
+      const response = await fetch(`${API_BASE_URL}/api/teams/regenerate-code`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

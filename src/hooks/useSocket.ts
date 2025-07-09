@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { useAuth } from '../context/AuthContext'
+import { SOCKET_URL } from '../config/api'
 
 export const useSocket = () => {
   const socketRef = useRef<Socket | null>(null)
@@ -9,7 +10,7 @@ export const useSocket = () => {
   useEffect(() => {
     if (token) {
       // Connect to socket with authentication
-      socketRef.current = io('http://localhost:5000', {
+      socketRef.current = io(SOCKET_URL, {
         auth: {
           token
         }
