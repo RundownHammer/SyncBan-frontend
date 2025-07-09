@@ -1,78 +1,66 @@
-export type Id = string | number;
-
-export type Column = {
-    id: Id;
-    title: string;
-}
-
-export interface ColumnProps {
-  title: string
-  items: Cards[]
-  onRemoveTask?: (title: string, column: string) => void
-}
-
-export interface Cards {
-  _id?: string
-  title: string
-  description: string
-  assignedTo: string
-  status: string
-  priority: string
-  team?: string
-  createdBy?: {
-    _id: string
-    username: string
-    email: string
-  }
-}
-
-export interface TaskProps {
-  title: string
-  index: number
-  parent: string
-  description?: string
-  assignedTo?: string
-  status?: string
-  priority?: string
-  onRemove?: () => void
-}
-
-export interface AddTasksProps {
-  addTask: (newItem: Omit<Cards, '_id'>) => void
-}
-
-// New interfaces for authentication and teams
 export interface User {
   _id: string
   username: string
   email: string
-  currentTeam?: Team
+  currentTeam?: string
+  createdAt: string
+  updatedAt: string
 }
 
 export interface Team {
   _id: string
   name: string
-  code?: string
+  code: string
+  creator: string
+  members: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Cards {
+  _id: string
+  title: string
+  description?: string
+  status: 'ToDo' | 'In Progress' | 'Done'
+  priority: 'Low' | 'Medium' | 'High'
+  assignedTo?: string
+  team: string
   createdBy: string
-  members: User[]
-  codeExpiresAt?: Date
-  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export interface AuthContextType {
   user: User | null
   token: string | null
+  loading: boolean
   login: (email: string, password: string) => Promise<void>
   register: (username: string, email: string, password: string) => Promise<void>
   logout: () => void
-  loading: boolean
 }
 
 export interface TeamContextType {
   team: Team | null
+  loading: boolean
   createTeam: (name: string) => Promise<void>
   joinTeam: (code: string) => Promise<void>
   leaveTeam: () => Promise<void>
   regenerateCode: () => Promise<void>
-  loading: boolean
+}
+
+export interface ColumnProps {
+  title: string
+  items: Cards[]
+  onRemoveTask?: (taskTitle: string, columnTitle: string) => void
+}
+
+export interface TaskProps {
+  title: string
+  description?: string
+  priority: 'Low' | 'Medium' | 'High'
+  status: 'ToDo' | 'In Progress' | 'Done'
+  assignedTo?: string
+  index: number
+  parent: string
+  onRemove: () => void
 }

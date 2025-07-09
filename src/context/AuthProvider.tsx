@@ -1,6 +1,6 @@
 import React, { useState, useEffect, type ReactNode } from 'react'
 import { AuthContext } from './AuthContext'
-import { API_BASE_URL } from '../config/api'
+import { API_ENDPOINTS, apiRequest } from '../config/api'
 import type { AuthContextType, User } from '../types'
 
 interface AuthProviderProps {
@@ -27,19 +27,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string): Promise<void> => {
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const data = await apiRequest(API_ENDPOINTS.AUTH.LOGIN, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed')
-      }
 
       setToken(data.token)
       setUser(data.user)
@@ -56,19 +47,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (username: string, email: string, password: string): Promise<void> => {
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      const data = await apiRequest(API_ENDPOINTS.AUTH.REGISTER, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password })
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed')
-      }
 
       setToken(data.token)
       setUser(data.user)

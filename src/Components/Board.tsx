@@ -6,7 +6,7 @@ import AddTasksForm from './AddTasksForm'
 import { useSocket } from '../hooks/useSocket'
 import { useAuth } from '../context/AuthContext'
 import { useTeam } from '../context/TeamContext'
-import TeamSelector from './team/TeamSelector'
+import { API_ENDPOINTS, apiRequest } from '../config/api'
 import '../styles/Board.css'
 
 const Board: React.FC = () => {
@@ -34,16 +34,8 @@ const Board: React.FC = () => {
     if (!token || !team) return
 
     try {
-      const response = await fetch('http://localhost:5000/api/tasks', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setTasks(data.tasks)
-      }
+      const data = await apiRequest(API_ENDPOINTS.TASKS.BASE)
+      setTasks(data.tasks || [])
     } catch (error) {
       console.error('Error fetching tasks:', error)
     }
@@ -132,15 +124,15 @@ const Board: React.FC = () => {
     }
   }
 
-  // Show team selector if user is not in a team
+  // Show team setup if user is not in a team
   if (!team) {
     return (
       <div className="board">
         <div className="board-header">
           <h1 className="board-title">📋 Live-ToDo</h1>
         </div>
-        <div className="team-setup">
-          <TeamSelector />
+        <div className="no-team-message">
+          <p>Please join or create a team to start managing tasks.</p>
         </div>
       </div>
     )
@@ -151,7 +143,6 @@ const Board: React.FC = () => {
       <div className="board-header">
         <h1 className="board-title">📋 Live-ToDo</h1>
         <div className="board-actions">
-          <TeamSelector />
           <button className="btn btn-primary" onClick={openDialog}>
             ➕ Add Task
           </button>

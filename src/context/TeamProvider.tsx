@@ -2,7 +2,7 @@ import React, { useState, useEffect, type ReactNode } from 'react'
 import { TeamContext } from './TeamContext'
 import type { TeamContextType, Team } from '../types'
 import { useAuth } from './AuthContext'
-import { API_BASE_URL } from '../config/api'
+import { API_ENDPOINTS, apiRequest } from '../config/api'
 
 interface TeamProviderProps {
   children: ReactNode
@@ -24,20 +24,14 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
     if (!token) return
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/teams/my-team`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setTeam(data.team)
-      } else if (response.status !== 404) {
-        console.error('Error fetching team')
-      }
+      const data = await apiRequest(API_ENDPOINTS.TEAMS.MY_TEAM)
+      setTeam(data.team)
     } catch (error) {
       console.error('Error fetching team:', error)
+      // Don't throw error if team not found
+      if (error instanceof Error && !error.message.includes('404')) {
+        console.error('Unexpected error:', error)
+      }
     }
   }
 
@@ -46,20 +40,10 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/teams/create`, {
+      await apiRequest(API_ENDPOINTS.TEAMS.CREATE, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ name })
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to create team')
-      }
 
       await fetchMyTeam() // Refresh team data
     } catch (error) {
@@ -75,20 +59,10 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/teams/join`, {
+      await apiRequest(API_ENDPOINTS.TEAMS.JOIN, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code })
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to join team')
-      }
 
       await fetchMyTeam() // Refresh team data
     } catch (error) {
@@ -104,18 +78,9 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/teams/leave`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      await apiRequest(API_ENDPOINTS.TEAMS.LEAVE, {
+        method: 'POST'
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to leave team')
-      }
 
       setTeam(null)
     } catch (error) {
@@ -131,18 +96,9 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/teams/regenerate-code`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      await apiRequest(API_ENDPOINTS.TEAMS.REGENERATE_CODE, {
+        method: 'POST'
       })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to regenerate code')
-      }
 
       await fetchMyTeam() // Refresh team data
     } catch (error) {
