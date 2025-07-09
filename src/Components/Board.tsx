@@ -1,168 +1,197 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DndContext, rectIntersection, type DragEndEvent } from '@dnd-kit/core'
 import Column from './Column'
 import type { Cards } from '../types'
 import AddTasksForm from './AddTasksForm'
-import './Board.css'
+import { useSocket } from '../hooks/useSocket'
+import { useAuth } from '../context/AuthContext'
+import { useTeam } from '../context/TeamContext'
+import TeamSelector from './team/TeamSelector'
+import '../styles/Board.css'
 
 const Board: React.FC = () => {
-  const [todoItems, setTodoItems] = useState<Cards[]>([
-    { title: 'Task 1', description: 'Description for Task 1', assignedTo: 'User A', status: 'ToDo', priority: 'High' },
-    { title: 'Task 2', description: 'Description for Task 2', assignedTo: 'User B', status: 'ToDo', priority: 'Medium' },
-    { title: 'Task 3', description: 'Description for Task 3', assignedTo: 'User C', status: 'ToDo', priority: 'Low' },
-  ])
+  const [todoItems, setTodoItems] = useState<Cards[]>([])
   const [doneItems, setDoneItems] = useState<Cards[]>([])
   const [inProgressItems, setInProgressItems] = useState<Cards[]>([])
 
-  const addTask = (newItem: Cards) => {
-    switch (newItem.status) {
-      case 'ToDo':
-        setTodoItems((prev) => [...prev, newItem])
-        break
-      case 'In Progress':
-        setInProgressItems((prev) => [...prev, newItem])
-        break
-      case 'Done':
-        setDoneItems((prev) => [...prev, newItem])
-        break
-      default:
-        console.warn('Unknown status:', newItem.status)
+  const socket = useSocket()
+  const { token } = useAuth()
+  const { team } = useTeam()
+
+  // Unified function to set tasks based on status
+  const setTasks = useCallback((tasks: Cards[]) => {
+    const todo = tasks.filter(task => task.status === 'ToDo')
+    const inProgress = tasks.filter(task => task.status === 'In Progress')
+    const done = tasks.filter(task => task.status === 'Done')
+    
+    setTodoItems(todo)
+    setInProgressItems(inProgress)
+    setDoneItems(done)
+  }, [])
+
+  // Fetch tasks from API
+  const fetchTasks = useCallback(async () => {
+    if (!token || !team) return
+
+    try {
+      const response = await fetch('http://localhost:5000/api/tasks', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setTasks(data.tasks)
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error)
     }
+  }, [token, team, setTasks])
+
+  // Load tasks when team changes
+  useEffect(() => {
+    if (team) {
+      fetchTasks()
+    } else {
+      setTasks([]) // Clear tasks if no team
+    }
+  }, [team, fetchTasks, setTasks])
+
+  // WebSocket event listeners
+  useEffect(() => {
+    if (!socket) return
+
+    socket.on('task:created', (task: Cards) => {
+      console.log('📝 Task created:', task)
+      fetchTasks() // Refresh all tasks
+    })
+
+    socket.on('task:updated', (task: Cards) => {
+      console.log('✏️ Task updated:', task)
+      fetchTasks() // Refresh all tasks
+    })
+
+    socket.on('task:deleted', (taskId: string) => {
+      console.log('🗑️ Task deleted:', taskId)
+      fetchTasks() // Refresh all tasks
+    })
+
+    socket.on('task:moved', ({ task }: { task: Cards }) => {
+      console.log('🔄 Task moved:', task)
+      fetchTasks() // Refresh all tasks
+    })
+
+    return () => {
+      socket.off('task:created')
+      socket.off('task:updated')
+      socket.off('task:deleted')
+      socket.off('task:moved')
+    }
+  }, [socket, fetchTasks])
+
+  const handleAddTask = async (newTask: Omit<Cards, '_id'>) => {
+    if (!socket) return
+
+    // Emit to socket for real-time sync
+    socket.emit('task:create', newTask)
+  }
+  
+  const handleDelete = async (taskId: string) => {
+    if (!socket) return
+
+    socket.emit('task:delete', taskId)
   }
 
-  const removeTask = (title: string, column: string) => {
-    const removeFromList = (list: Cards[]) => list.filter((item) => item.title !== title)
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+    
+    if (!over || !socket) return
 
-    switch (column) {
-      case 'ToDo':
-        setTodoItems(removeFromList)
-        break
-      case 'In Progress':
-        setInProgressItems(removeFromList)
-        break
-      case 'Done':
-        setDoneItems(removeFromList)
-        break
-      default:
-        console.warn('Unknown column:', column)
-    }
+    const taskId = active.id as string
+    const newStatus = over.id as string
+
+    // Find the task being moved
+    const allTasks = [...todoItems, ...inProgressItems, ...doneItems]
+    const task = allTasks.find(t => t._id === taskId)
+    
+    if (!task || task.status === newStatus) return
+
+    // Emit socket event for real-time sync
+    socket.emit('task:move', {
+      taskId,
+      newStatus,
+      newIndex: 0 // You can calculate proper index if needed
+    })
   }
 
-  const showDialogModal = () => {
+  const openDialog = () => {
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
     if (dialog) {
       dialog.showModal()
     }
   }
 
-  const moveCard = (
-    title: string,
-    description: string,
-    assignedTo: string,
-    priority: string,
-    from: string,
-    to: string,
-    index: number
-  ) => {
-    // Helper functions
-    const removeFrom = (list: Cards[]) => [
-      ...list.slice(0, index), 
-      ...list.slice(index + 1)
-    ]
-    
-    const addTo = (list: Cards[]) => [
-      ...list, 
-      { title, description, assignedTo, priority, status: to }
-    ]
-
-    // Get current state
-    const getList = (key: string): Cards[] => {
-      switch (key) {
-        case 'ToDo': return todoItems
-        case 'Done': return doneItems
-        case 'In Progress': return inProgressItems
-        default: 
-          console.warn('Unknown column key:', key)
-          return []
-      }
-    }
-
-    // Update state
-    const updateList = (key: string, newList: Cards[]) => {
-      switch (key) {
-        case 'ToDo':
-          setTodoItems(newList)
-          break
-        case 'Done':
-          setDoneItems(newList)
-          break
-        case 'In Progress':
-          setInProgressItems(newList)
-          break
-        default:
-          console.warn('Unknown column key:', key)
-      }
-    }
-
-    // Perform the move
-    const fromList = getList(from)
-    const toList = getList(to)
-    
-    updateList(from, removeFrom(fromList))
-    updateList(to, addTo(toList))
-  }
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event
-    
-    // Check if active.data.current exists and has the expected properties
-    if (!over || !active.data.current) return
-
-    // Type guard for our expected data shape
-    const data = active.data.current as Cards & { parent: string; index: number }
-
-    const to = over.id
-    const from = data.parent
-    const index = data.index
-    const { title, description, assignedTo, priority } = data
-
-    // Only move if dropping on a different column
-    if (to && from && to !== from) {
-      moveCard(title, description, assignedTo, priority, from, to.toString(), index)
-    }
+  // Show team selector if user is not in a team
+  if (!team) {
+    return (
+      <div className="board">
+        <div className="board-header">
+          <h1 className="board-title">📋 Live-ToDo</h1>
+        </div>
+        <div className="team-setup">
+          <TeamSelector />
+        </div>
+      </div>
+    )
   }
 
   return (
-    <>
+    <div className="board">
+      <div className="board-header">
+        <h1 className="board-title">📋 Live-ToDo</h1>
+        <div className="board-actions">
+          <TeamSelector />
+          <button className="btn btn-primary" onClick={openDialog}>
+            ➕ Add Task
+          </button>
+        </div>
+      </div>
+
       <DndContext
         collisionDetection={rectIntersection}
         onDragEnd={handleDragEnd}
       >
-        <div className="board">
-          <Column 
-            title="ToDo" 
-            items={todoItems} 
-            onRemoveTask={removeTask}
+        <div className="board-columns">
+          <Column
+            title="ToDo"
+            items={todoItems}
+            onRemoveTask={(title) => {
+              const task = todoItems.find(t => t.title === title)
+              if (task?._id) handleDelete(task._id)
+            }}
           />
-          <Column 
-            title="In Progress" 
-            items={inProgressItems} 
-            onRemoveTask={removeTask}
+          <Column
+            title="In Progress"
+            items={inProgressItems}
+            onRemoveTask={(title) => {
+              const task = inProgressItems.find(t => t.title === title)
+              if (task?._id) handleDelete(task._id)
+            }}
           />
-          <Column 
-            title="Done" 
-            items={doneItems} 
-            onRemoveTask={removeTask}
+          <Column
+            title="Done"
+            items={doneItems}
+            onRemoveTask={(title) => {
+              const task = doneItems.find(t => t.title === title)
+              if (task?._id) handleDelete(task._id)
+            }}
           />
         </div>
       </DndContext>
-      
-      <AddTasksForm addTask={addTask} />
-      
-      <button className="add-task-button" onClick={showDialogModal}>
-        Add Task
-      </button>
-    </>
+
+      <AddTasksForm addTask={handleAddTask} />
+    </div>
   )
 }
 

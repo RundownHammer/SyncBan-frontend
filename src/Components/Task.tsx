@@ -2,7 +2,7 @@ import React from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { type TaskProps } from '../types'
-import './Task.css'
+import '../styles/Task.css'
 
 const Task: React.FC<TaskProps> = ({ 
   title, 

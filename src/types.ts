@@ -1,41 +1,78 @@
-// This file defines the types and interfaces used in the Kanban board application
 export type Id = string | number;
 
-// This type defines the structure of an ID, which can be a string or a number
 export type Column = {
     id: Id;
     title: string;
 }
 
-// This interface defines the structure of a column in the Kanban board
 export interface ColumnProps {
   title: string
   items: Cards[]
   onRemoveTask?: (title: string, column: string) => void
 }
 
-// This interface defines the structure of a task card
 export interface Cards {
+  _id?: string
   title: string
   description: string
   assignedTo: string
   status: string
   priority: string
+  team?: string
+  createdBy?: {
+    _id: string
+    username: string
+    email: string
+  }
 }
 
-// This interface defines the properties for a task component
 export interface TaskProps {
   title: string
   index: number
   parent: string
-  description: string
-  assignedTo: string
-  status: string
-  priority: string
+  description?: string
+  assignedTo?: string
+  status?: string
+  priority?: string
   onRemove?: () => void
 }
 
-// This interface defines the properties for the AddTasksForm component
 export interface AddTasksProps {
   addTask: (newItem: Cards) => void
+}
+
+// New interfaces for authentication and teams
+export interface User {
+  _id: string
+  username: string
+  email: string
+  currentTeam?: Team
+}
+
+export interface Team {
+  _id: string
+  name: string
+  code?: string
+  createdBy: string
+  members: User[]
+  codeExpiresAt?: Date
+  isActive: boolean
+}
+
+export interface AuthContextType {
+  user: User | null
+  token: string | null
+  login: (email: string, password: string) => Promise<void>
+  register: (username: string, email: string, password: string) => Promise<void>
+  logout: () => void
+  loading: boolean
+}
+
+export interface TeamContextType {
+  team: Team | null
+  createTeam: (name: string) => Promise<void>
+  joinTeam: (code: string) => Promise<void>
+  leaveTeam: () => Promise<void>
+  regenerateCode: () => Promise<void>
+  loading: boolean
 }

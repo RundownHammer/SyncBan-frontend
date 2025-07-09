@@ -2,7 +2,7 @@ import React from 'react'
 import { useDroppable } from '@dnd-kit/core'
 import Task from './Task'
 import { type ColumnProps } from '../types'
-import './Column.css'
+import '../styles/Column.css'
 
 const Column: React.FC<ColumnProps> = ({ title, items, onRemoveTask }) => {
   const { setNodeRef, isOver } = useDroppable({ id: title })

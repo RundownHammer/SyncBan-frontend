@@ -1,6 +1,6 @@
 import React from 'react'
 import { type AddTasksProps } from '../types'
-import './AddTasksForm.css'
+import '../styles/AddTasksForm.css'
 
 const AddTasksForm: React.FC<AddTasksProps> = ({ addTask }) => {
     const [title, setTitle] = React.useState('')
