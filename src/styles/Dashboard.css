@@ -42,24 +42,6 @@
     font-size: 2rem;
   }
   
-  .team-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  .team-name {
-    font-weight: 600;
-    color: #6366f1;
-    font-size: 1.1rem;
-  }
-  
-  .team-code {
-    font-size: 0.85rem;
-    color: #94a3b8;
-    font-family: 'Courier New', monospace;
-  }
-  
   .header-right {
     display: flex;
     align-items: center;
@@ -355,19 +337,6 @@
       font-size: 1.5rem;
     }
 
-    .team-info {
-      gap: 2px;
-    }
-
-    .team-name {
-      font-size: 1rem;
-    }
-
-    .team-code {
-      font-size: 0.8rem;
-      display: none; /* Hide team code in header on mobile */
-    }
-
     /* Hide desktop menu on mobile */
     .desktop-menu {
       display: none;
@@ -404,10 +373,6 @@
       font-size: 1.5rem;
     }
 
-    .team-info {
-      display: none; /* Hide team info on very small screens */
-    }
-
     .user-info-mobile .user-name {
       font-size: 0.8rem;
     }
@@ -430,10 +395,5 @@
 
     .mobile-menu {
       display: none;
-    }
-
-    /* Show team code in header on desktop/tablet */
-    .team-code {
-      display: inline-block; /* Show team code in header on desktop/tablet */
     }
   }

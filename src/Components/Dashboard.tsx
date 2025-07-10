@@ -77,12 +77,6 @@ const Dashboard: React.FC = () => {
               <span className="logo">🎯</span>
               SyncBan
             </h1>
-            {team && (
-              <div className="team-info">
-                <span className="team-name">{team.name}</span>
-                <span className="team-code">#{team.code}</span>
-              </div>
-            )}
           </div>
           
           <div className="header-right">

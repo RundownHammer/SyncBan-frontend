@@ -56,7 +56,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: all; /* Makes it easy to select for copying */
-  display: none; /* Hide by default on desktop/tablet */
+  display: inline-block; /* Always visible in team info bar */
 }
 
 .team-code:hover {
@@ -410,13 +410,6 @@
   color: white;
 }
 
-/* Hide team code in team info bar on desktop/tablet */
-@media (min-width: 769px) {
-  .team-info-bar .team-code {
-    display: none !important; /* Hide team code in team info bar on desktop/tablet */
-  }
-}
-
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .board-container {
@@ -453,7 +446,6 @@
   .team-code {
     font-size: 0.8rem;
     padding: 0.2rem 0.6rem;
-    display: block; /* Show team code in team info bar on mobile */
   }
 
   .team-members-section {
