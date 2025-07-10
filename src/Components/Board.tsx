@@ -127,9 +127,9 @@ const Board: React.FC = () => {
   // Show team setup if user is not in a team
   if (!team) {
     return (
-      <div className="board">
+      <div className="board-container">
         <div className="board-header">
-          <h1 className="board-title">📋 Live-ToDo</h1>
+          <h1 className="board-title">📋 SyncBan</h1>
         </div>
         <div className="no-team-message">
           <p>Please join or create a team to start managing tasks.</p>
@@ -139,14 +139,9 @@ const Board: React.FC = () => {
   }
 
   return (
-    <div className="board">
+    <div className="board-container">
       <div className="board-header">
         <h1 className="board-title">📋 SyncBan</h1>
-        <div className="board-actions">
-          <button className="btn btn-primary" onClick={openDialog}>
-            ➕ Add Task
-          </button>
-        </div>
       </div>
 
       <DndContext
@@ -180,6 +175,11 @@ const Board: React.FC = () => {
           />
         </div>
       </DndContext>
+
+      {/* Fixed positioned Add Task button */}
+      <button className="add-task-button" onClick={openDialog}>
+        ➕ Add Task
+      </button>
 
       <AddTasksForm addTask={handleAddTask} />
     </div>
