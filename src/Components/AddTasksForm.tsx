@@ -1,27 +1,38 @@
 import React, { useState } from 'react'
-import type { CreateTaskData } from '../types'
+import type { CreateTaskData, Cards } from '../types'
+import { useTeam } from '../context/TeamContext'
+import { validateTaskData } from '../utils/validation'
 import '../styles/AddTasksForm.css'
 
 interface AddTasksFormProps {
-  addTask: (task: CreateTaskData) => void  // Use simpler interface
+  addTask: (task: CreateTaskData) => void
+  existingTasks?: Cards[]
 }
 
-const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
+const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask, existingTasks = [] }) => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>('Medium')
   const [assignedTo, setAssignedTo] = useState('')
   const [status] = useState<'ToDo' | 'In Progress' | 'Done'>('ToDo')
+  const [error, setError] = useState('')
+  
+  const { team } = useTeam()
+
+  // Get team members for assignment dropdown
+  const getTeamMembers = () => {
+    if (!team || !team.members) return []
+    return team.members
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setError('')
     
-    console.log('🚀 Form submitted!')
-    console.log('📋 Form data:', { title, description, priority, assignedTo, status })
-    
-    if (!title.trim()) {
-      console.error('❌ Title is required!')
-      alert('Please enter a task title')
+    // Validate the task data
+    const validation = validateTaskData(title, description, existingTasks)
+    if (!validation.isValid) {
+      setError(validation.message || 'Invalid task data')
       return
     }
 
@@ -33,67 +44,61 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
       assignedTo: assignedTo.trim() || undefined
     }
 
-    console.log('✅ Calling addTask with:', newTask)
     addTask(newTask)
     
     // Reset form
-    console.log('🔄 Resetting form...')
     setTitle('')
     setDescription('')
     setPriority('Medium')
     setAssignedTo('')
+    setError('')
     
     // Close dialog
-    console.log('🔒 Closing dialog...')
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
     if (dialog) {
       dialog.close()
-      console.log('✅ Dialog closed')
-    } else {
-      console.error('❌ Could not find dialog to close')
     }
   }
 
   const handleClose = () => {
-    console.log('❌ Close button clicked')
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
     if (dialog) {
       dialog.close()
     }
   }
 
-  console.log('🎨 AddTasksForm rendered')
-
   return (
     <dialog className="add-tasks-dialog">
       <div className="form-container">
-        <button className="close-btn" onClick={handleClose} type="button">
-          ×
-        </button>
-
-        <div className="form-header">
-          <h2 className="form-title">➕ Add New Task</h2>
-          <p className="form-subtitle">Create a new task for your team</p>
+        <div className="dialog-header">
+          <h2 className="dialog-title">➕ Add New Task</h2>
+          <button className="close-btn" onClick={handleClose} type="button">
+            ×
+          </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="task-form">
-          <div className="form-group">
-            <label htmlFor="title" className="form-label">Task Title *</label>
-            <input
-              type="text"
-              id="title"
-              className="form-input"
-              placeholder="Enter task title"
-              value={title}
-              onChange={(e) => {
-                console.log('📝 Title changed:', e.target.value)
-                setTitle(e.target.value)
-              }}
-              required
-            />
-          </div>
+        <div className="form-content">
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit} className="task-form">
+            <div className="form-group full-width">
+              <label htmlFor="title" className="form-label">Task Title *</label>
+              <input
+                type="text"
+                id="title"
+                className="form-input"
+                placeholder="Enter task title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
 
-          <div className="form-group">
+          <div className="form-group full-width">
             <label htmlFor="description" className="form-label">Description</label>
             <textarea
               id="description"
@@ -105,48 +110,56 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="priority" className="form-label">Priority</label>
-            <select
-              id="priority"
-              className="form-select"
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as 'Low' | 'Medium' | 'High')}
-            >
-              <option value="Low">🟢 Low</option>
-              <option value="Medium">🟡 Medium</option>
-              <option value="High">🔴 High</option>
-            </select>
+          <div className="form-row">
+            <div className="form-group">
+              <label htmlFor="priority" className="form-label">Priority</label>
+              <select
+                id="priority"
+                className="form-select"
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as 'Low' | 'Medium' | 'High')}
+              >
+                <option value="Low">🟢 Low</option>
+                <option value="Medium">🟡 Medium</option>
+                <option value="High">🔴 High</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="assignedTo" className="form-label">Assigned To</label>
+              <select
+                id="assignedTo"
+                className="form-select"
+                value={assignedTo}
+                onChange={(e) => setAssignedTo(e.target.value)}
+              >
+                <option value="">None</option>
+                {getTeamMembers().map((member, index) => (
+                  <option key={member._id || index} value={member._id || member.username}>
+                    {member.username}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label htmlFor="assignedTo" className="form-label">Assigned To</label>
-            <input
-              type="text"
-              id="assignedTo"
-              className="form-input"
-              placeholder="Enter assignee name (optional)"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-            />
-          </div>
-
-          <div className="form-actions">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn btn-primary"
-            >
-              Add Task
-            </button>
-          </div>
-        </form>
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleClose}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+              >
+                Add Task
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </dialog>
   )

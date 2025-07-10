@@ -20,7 +20,8 @@ export const API_ENDPOINTS = {
   },
   TASKS: {
     BASE: '/api/tasks'
-  }
+  },
+  ACTIVITIES: '/api/activities'
 }
 
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {

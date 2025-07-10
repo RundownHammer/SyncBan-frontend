@@ -1,62 +1,100 @@
-.team-setup {
-    width: 100%;
+.team-setup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(8px);
+}
+
+.team-setup-modal {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  width: 90%;
+  max-width: 600px;
+  min-height: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
   }
-  
-  .team-setup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
-  
-  .team-setup-header h2 {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #f1f5f9;
-    margin: 0;
-  }
-  
-  .close-btn {
-    background: none;
-    border: none;
-    color: #94a3b8;
-    font-size: 2rem;
-    cursor: pointer;
-    padding: 0;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-  }
-  
-  .close-btn:hover {
-    background: rgba(148, 163, 184, 0.1);
-    color: #f1f5f9;
-  }
-  
-  .team-setup-tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 30px;
-    background: rgba(71, 85, 105, 0.3);
-    border-radius: 8px;
-    padding: 4px;
-  }
-  
-  .tab-btn {
-    flex: 1;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 6px;
-    background: transparent;
-    color: #94a3b8;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
+}
+
+.team-setup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.team-setup-header h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(148, 163, 184, 0.1);
+  color: #f1f5f9;
+  transform: scale(1.1);
+}
+
+.team-setup-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 30px;
+  background: rgba(71, 85, 105, 0.3);
+  border-radius: 12px;
+  padding: 6px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
   
   .tab-btn.active {
     background: rgba(99, 102, 241, 0.2);
@@ -116,3 +154,95 @@
     margin-bottom: 20px;
     font-size: 0.9rem;
   }
+
+.team-setup-content {
+  background: rgba(15, 23, 42, 0.4);
+  border-radius: 16px;
+  padding: 30px;
+  margin-top: 20px;
+  min-height: 300px;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.tab-info {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.tab-info h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin: 0 0 10px 0;
+}
+
+.tab-info p {
+  color: #94a3b8;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .team-setup-modal {
+    width: 95%;
+    max-width: none;
+    min-height: 60vh;
+    max-height: 95vh;
+    padding: 30px 20px;
+    margin: 10px;
+  }
+
+  .team-setup-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .team-setup-content {
+    padding: 20px;
+    min-height: 250px;
+  }
+
+  .tab-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .tab-info p {
+    font-size: 0.9rem;
+  }
+
+  .form-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .tab-btn {
+    font-size: 0.9rem;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-setup-modal {
+    width: 98%;
+    min-height: 70vh;
+    padding: 20px 15px;
+  }
+
+  .team-setup-header {
+    margin-bottom: 20px;
+  }
+
+  .team-setup-content {
+    padding: 15px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+  }
+}

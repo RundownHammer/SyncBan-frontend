@@ -6,14 +6,20 @@
   
   /* Header */
   .dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 30px;
     background: rgba(30, 41, 59, 0.8);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(71, 85, 105, 0.3);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10001; /* Higher than mobile dropdown */
+  }
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    max-width: 100%;
   }
   
   .header-left {
@@ -201,32 +207,233 @@
     color: #f1f5f9;
   }
   
+  /* Mobile Menu Styles */
+  .mobile-menu {
+    display: none;
+    position: relative;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .user-info-mobile {
+    display: flex;
+    align-items: center;
+  }
+
+  .user-info-mobile .user-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+
+  .mobile-menu-btn {
+    background: rgba(71, 85, 105, 0.6);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    color: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-menu-btn:hover {
+    background: rgba(71, 85, 105, 0.8);
+    transform: translateY(-1px);
+  }
+
+  .hamburger-icon {
+    display: block;
+    font-size: 1.2rem;
+  }
+
+  .mobile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    min-width: 200px;
+    z-index: 10000;
+    animation: dropdownSlideIn 0.2s ease-out;
+  }
+
+  @keyframes dropdownSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mobile-dropdown-content {
+    padding: 16px;
+  }
+
+  .mobile-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    margin-bottom: 12px;
+  }
+
+  .mobile-user-name {
+    font-weight: 600;
+    color: #f1f5f9;
+    font-size: 1rem;
+  }
+
+  .mobile-user-email {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .mobile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .mobile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(71, 85, 105, 0.6);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    color: #f1f5f9;
+    padding: 12px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-align: left;
+    width: 100%;
+  }
+
+  .mobile-btn:hover {
+    background: rgba(71, 85, 105, 0.8);
+    transform: translateY(-1px);
+  }
+
+  .mobile-btn.logout {
+    background: rgba(239, 68, 68, 0.6);
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+
+  .mobile-btn.logout:hover {
+    background: rgba(239, 68, 68, 0.8);
+  }
+
+  .desktop-menu {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
   /* Responsive Design */
   @media (max-width: 768px) {
-    .dashboard-header {
-      flex-direction: column;
-      gap: 20px;
-      padding: 20px;
+    .header-content {
+      padding: 16px 20px;
     }
-  
-    .header-left,
-    .header-right {
-      width: 100%;
+
+    .header-left {
+      flex: 1;
+      min-width: 0;
     }
-  
-    .header-right {
-      justify-content: space-between;
+
+    .dashboard-title {
+      font-size: 1.5rem;
     }
-  
+
+    .team-info {
+      gap: 2px;
+    }
+
+    .team-name {
+      font-size: 1rem;
+    }
+
+    .team-code {
+      font-size: 0.8rem;
+      display: none; /* Hide team code in header on mobile */
+    }
+
+    /* Hide desktop menu on mobile */
+    .desktop-menu {
+      display: none;
+    }
+
+    /* Show mobile menu on mobile */
+    .mobile-menu {
+      display: flex;
+    }
+
     .dashboard-main {
       padding: 20px;
     }
-  
+
     .no-team-card {
       padding: 40px 30px;
     }
-  
+
     .modal-content {
       margin: 20px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .header-content {
+      padding: 12px 16px;
+    }
+
+    .dashboard-title {
+      font-size: 1.3rem;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+    }
+
+    .team-info {
+      display: none; /* Hide team info on very small screens */
+    }
+
+    .user-info-mobile .user-name {
+      font-size: 0.8rem;
+    }
+
+    .mobile-dropdown {
+      right: -8px;
+      min-width: 180px;
+    }
+
+    .mobile-dropdown-content {
+      padding: 12px;
+    }
+  }
+
+  /* Show desktop menu on larger screens */
+  @media (min-width: 769px) {
+    .desktop-menu {
+      display: flex;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    /* Show team code in header on desktop/tablet */
+    .team-code {
+      display: inline-block; /* Show team code in header on desktop/tablet */
     }
   }

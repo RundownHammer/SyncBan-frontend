@@ -12,7 +12,7 @@ export interface Team {
   name: string
   code: string  // Keep as 'code' (matches backend)
   createdBy: string  // Change from 'creator' to 'createdBy'
-  members: string[]
+  members: User[]  // Changed from string[] to User[]
   codeExpiresAt: string  // Add this property
   isActive: boolean      // Add this property
   createdAt: string
@@ -64,6 +64,9 @@ export interface ColumnProps {
   title: string
   items: Cards[]
   onRemoveTask?: (taskTitle: string, columnTitle: string) => void
+  onSmartAssign?: (taskId: string) => void  // Add smart assign callback
+  onMobileMove?: (taskId: string, newStatus: string) => void  // Add mobile move callback
+  isMobile?: boolean  // Add mobile flag
 }
 
 export interface TaskProps {
@@ -75,4 +78,8 @@ export interface TaskProps {
   index: number
   parent: string
   onRemove: () => void
+  taskId?: string  // Add taskId prop
+  onSmartAssign?: () => void  // Add smart assign callback
+  onMobileMove?: (taskId: string, newStatus: string) => void  // Add mobile move callback
+  isMobile?: boolean  // Add mobile flag
 }

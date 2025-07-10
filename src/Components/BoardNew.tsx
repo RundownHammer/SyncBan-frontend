@@ -68,19 +68,23 @@ const Board: React.FC = () => {
   useEffect(() => {
     if (!socket) return
 
-    socket.on('task:created', () => {
+    socket.on('task:created', (task: Cards) => {
+      console.log('📝 Task created:', task)
       fetchTasks() // Refresh all tasks
     })
 
-    socket.on('task:updated', () => {
+    socket.on('task:updated', (task: Cards) => {
+      console.log('✏️ Task updated:', task)
       fetchTasks() // Refresh all tasks
     })
 
-    socket.on('task:deleted', () => {
+    socket.on('task:deleted', (taskId: string) => {
+      console.log('🗑️ Task deleted:', taskId)
       fetchTasks() // Refresh all tasks
     })
 
-    socket.on('task:moved', () => {
+    socket.on('task:moved', ({ task }: { task: Cards }) => {
+      console.log('🔄 Task moved:', task)
       fetchTasks() // Refresh all tasks
     })
 
@@ -93,7 +97,10 @@ const Board: React.FC = () => {
   }, [socket, fetchTasks])
 
   const handleAddTask = (newTask: CreateTaskData) => {
+    console.log('🔥 handleAddTask called with:', newTask)
+    
     if (!socket || !team) {
+      console.error('❌ Socket or team not available')
       return
     }
 
@@ -102,6 +109,8 @@ const Board: React.FC = () => {
       ...newTask,
       team: team._id
     })
+    
+    console.log('✅ Task creation request sent to server')
   }
   
   const handleDelete = async (taskId: string) => {
@@ -118,11 +127,17 @@ const Board: React.FC = () => {
     const taskId = active.id as string
     const newStatus = over.id as string
 
+    console.log('🔄 Drag end - Task ID:', taskId, 'New Status:', newStatus)
+
     // Find the task being moved
     const allTasks = [...todoItems, ...inProgressItems, ...doneItems]
     const task = allTasks.find(t => t._id === taskId)
     
+    console.log('📋 Found task:', task)
+    console.log('📋 All tasks:', allTasks.map(t => ({ id: t._id, title: t.title })))
+    
     if (!task || task.status === newStatus) {
+      console.log('❌ Task not found or status unchanged')
       return
     }
 
@@ -138,6 +153,8 @@ const Board: React.FC = () => {
   const handleMobileTaskMove = (taskId: string, newStatus: string) => {
     if (!socket) return
 
+    console.log('📱 Mobile task move:', taskId, '→', newStatus)
+    
     socket.emit('task:move', {
       taskId,
       newStatus,
@@ -154,9 +171,9 @@ const Board: React.FC = () => {
       const allTasks = [...todoItems, ...inProgressItems, ...doneItems]
       const taskCounts = new Map<string, number>()
       
-      // Count tasks per team member (using user ID)
+      // Count tasks per team member
       team.members.forEach(member => {
-        const memberTasks = allTasks.filter(task => task.assignedTo === member._id)
+        const memberTasks = allTasks.filter(task => task.assignedTo === member._id || task.assignedTo === member.username)
         taskCounts.set(member._id, memberTasks.length)
       })
       
@@ -175,38 +192,25 @@ const Board: React.FC = () => {
       // Emit socket event to assign task
       socket.emit('task:assign', {
         taskId,
-        assignedTo: leastBusyUser._id // Always use user ID for assignment
+        assignedTo: leastBusyUser._id
       })
       
+      console.log(`🎯 Smart assigned task to ${leastBusyUser.username} (${minTasks} tasks)`)
     } catch (error) {
       console.error('❌ Error in smart assign:', error)
     }
   }
 
   const openDialog = () => {
+    console.log('🎯 Opening dialog...')
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
+    console.log('📋 Dialog element:', dialog)
     
     if (dialog) {
       dialog.showModal()
-    }
-  }
-
-  const copyTeamCode = async () => {
-    if (!team) return
-    
-    try {
-      await navigator.clipboard.writeText(team.code)
-      // You could add a toast notification here
-      console.log('Team code copied to clipboard')
-    } catch {
-      // Fallback for older browsers
-      const textArea = document.createElement('textarea')
-      textArea.value = team.code
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      console.log('Team code copied to clipboard (fallback)')
+      console.log('✅ Dialog opened')
+    } else {
+      console.error('❌ Dialog not found!')
     }
   }
 
@@ -214,12 +218,8 @@ const Board: React.FC = () => {
   if (!team) {
     return (
       <div className="board-container">
-        <div className="team-info-bar">
-          <div className="team-info-content">
-            <div className="team-name-section">
-              <span className="team-name">No Team Selected</span>
-            </div>
-          </div>
+        <div className="board-header">
+          <h1 className="board-title">📋 SyncBan</h1>
         </div>
         <div className="no-team-message">
           <p>Please join or create a team to start managing tasks.</p>
@@ -230,34 +230,16 @@ const Board: React.FC = () => {
 
   return (
     <div className="board-container">
-      {/* Combined team info bar */}
-      {team && (
-        <div className="team-info-bar">
-          <div className="team-info-content">
-            <div className="team-name-section">
-              <span className="team-name">{team.name}</span>
-              <span 
-                className="team-code" 
-                onClick={copyTeamCode}
-                title="Click to copy team code"
-              >
-                #{team.code}
-              </span>
-            </div>
-            <div className="team-members-section">
-              <span className="members-label">👥</span>
-              <div className="members-list">
-                {team.members.map((member) => (
-                  <span key={member._id} className="member-badge">
-                    {member.username || member._id}
-                  </span>
-                ))}
-              </div>
-              <span className="members-count">({team.members.length})</span>
-            </div>
+      {/* Mobile-friendly header */}
+      <div className="board-header">
+        <h1 className="board-title">📋 SyncBan</h1>
+        {team && (
+          <div className="board-team-info">
+            <span className="team-name">{team.name}</span>
+            <span className="team-members-count">{team.members.length} members</span>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Mobile and Desktop Board */}
       {isMobile ? (
@@ -355,10 +337,7 @@ const Board: React.FC = () => {
         </button>
       </div>
 
-      <AddTasksForm 
-        addTask={handleAddTask} 
-        existingTasks={[...todoItems, ...inProgressItems, ...doneItems]}
-      />
+      <AddTasksForm addTask={handleAddTask} />
       <ActivityLog 
         isOpen={isActivityLogOpen} 
         onClose={() => setIsActivityLogOpen(false)} 
