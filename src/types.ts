@@ -10,9 +10,11 @@ export interface User {
 export interface Team {
   _id: string
   name: string
-  code: string
-  creator: string
+  code: string  // Keep as 'code' (matches backend)
+  createdBy: string  // Change from 'creator' to 'createdBy'
   members: string[]
+  codeExpiresAt: string  // Add this property
+  isActive: boolean      // Add this property
   createdAt: string
   updatedAt: string
 }

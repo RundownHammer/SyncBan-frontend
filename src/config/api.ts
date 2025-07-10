@@ -11,9 +11,8 @@ export const SOCKET_URL = API_CONFIG.SOCKET_URL
 // Log configuration for debugging
 console.log('🌐 API Base URL:', API_CONFIG.BASE_URL)
 console.log('📡 Socket URL:', API_CONFIG.SOCKET_URL)
-console.log('🔧 Environment:', API_CONFIG.NODE_ENV)
 
-// API endpoints
+// API endpoints - match your backend routes exactly
 export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: `${API_CONFIG.BASE_URL}/api/auth/login`,
@@ -36,7 +35,7 @@ export const API_ENDPOINTS = {
   }
 }
 
-// Create a fetch wrapper with proper error handling
+// API request wrapper
 export const apiRequest = async (url: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token')
   

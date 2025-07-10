@@ -96,7 +96,7 @@ const TeamSelector: React.FC = () => {
                 📋
               </button>
             </div>
-            {team.creator === user?._id && (
+            {team.createdBy === user?._id && (
               <button
                 className="btn btn-secondary btn-small"
                 onClick={handleRegenerateCode}

@@ -28,7 +28,7 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
       setTeam(data.team)
     } catch (error) {
       console.error('Error fetching team:', error)
-      // Don't throw error if team not found
+      // Don't throw error if team not found (404)
       if (error instanceof Error && !error.message.includes('404')) {
         console.error('Unexpected error:', error)
       }
@@ -40,12 +40,12 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      await apiRequest(API_ENDPOINTS.TEAMS.CREATE, {
+      const data = await apiRequest(API_ENDPOINTS.TEAMS.CREATE, {
         method: 'POST',
         body: JSON.stringify({ name })
       })
 
-      await fetchMyTeam() // Refresh team data
+      setTeam(data.team)
     } catch (error) {
       console.error('Create team error:', error)
       throw error
@@ -59,12 +59,12 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      await apiRequest(API_ENDPOINTS.TEAMS.JOIN, {
+      const data = await apiRequest(API_ENDPOINTS.TEAMS.JOIN, {
         method: 'POST',
         body: JSON.stringify({ code })
       })
 
-      await fetchMyTeam() // Refresh team data
+      setTeam(data.team)
     } catch (error) {
       console.error('Join team error:', error)
       throw error
@@ -96,11 +96,18 @@ export const TeamProvider: React.FC<TeamProviderProps> = ({ children }) => {
 
     setLoading(true)
     try {
-      await apiRequest(API_ENDPOINTS.TEAMS.REGENERATE_CODE, {
+      const data = await apiRequest(API_ENDPOINTS.TEAMS.REGENERATE_CODE, {
         method: 'POST'
       })
 
-      await fetchMyTeam() // Refresh team data
+      // Update team with new code
+      if (team) {
+        setTeam({
+          ...team,
+          code: data.code,
+          codeExpiresAt: data.expiresAt
+        })
+      }
     } catch (error) {
       console.error('Regenerate code error:', error)
       throw error
