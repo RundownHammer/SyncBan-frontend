@@ -11,6 +11,7 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High'>('Medium')
   const [assignedTo, setAssignedTo] = useState('')
+  const [status] = useState<'ToDo' | 'In Progress' | 'Done'>('ToDo')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -19,12 +20,12 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
 
     const newTask: Omit<Cards, '_id'> = {
       title: title.trim(),
-      description: description.trim() || undefined,
-      status: 'ToDo',
+      description: description.trim(),
       priority,
+      status,
       assignedTo: assignedTo.trim() || undefined,
-      team: '', // Will be set by backend
-      createdBy: '', // Will be set by backend
+      team: '',
+      createdBy: '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     }
@@ -44,7 +45,7 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
     }
   }
 
-  const closeDialog = () => {
+  const handleClose = () => {
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
     if (dialog) {
       dialog.close()
@@ -53,65 +54,80 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
 
   return (
     <dialog className="add-tasks-dialog">
-      <div className="dialog-content">
-        <div className="dialog-header">
-          <h2>Add New Task</h2>
-          <button type="button" className="close-btn" onClick={closeDialog}>×</button>
+      <div className="form-container">
+        <button className="close-btn" onClick={handleClose} type="button">
+          ×
+        </button>
+
+        <div className="form-header">
+          <h2 className="form-title">➕ Add New Task</h2>
+          <p className="form-subtitle">Create a new task for your team</p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="add-task-form">
+
+        <form onSubmit={handleSubmit} className="task-form">
           <div className="form-group">
-            <label htmlFor="title">Task Title *</label>
+            <label htmlFor="title" className="form-label">Task Title *</label>
             <input
               type="text"
               id="title"
+              className="form-input"
+              placeholder="Enter task title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              placeholder="Enter task title"
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="description">Description</label>
+            <label htmlFor="description" className="form-label">Description</label>
             <textarea
               id="description"
+              className="form-textarea"
+              placeholder="Enter task description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter task description"
               rows={3}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="priority">Priority</label>
+            <label htmlFor="priority" className="form-label">Priority</label>
             <select
               id="priority"
+              className="form-select"
               value={priority}
               onChange={(e) => setPriority(e.target.value as 'Low' | 'Medium' | 'High')}
             >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
+              <option value="Low">🟢 Low</option>
+              <option value="Medium">🟡 Medium</option>
+              <option value="High">🔴 High</option>
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="assignedTo">Assigned To</label>
+            <label htmlFor="assignedTo" className="form-label">Assigned To</label>
             <input
               type="text"
               id="assignedTo"
+              className="form-input"
+              placeholder="Enter assignee name (optional)"
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
-              placeholder="Enter assignee name"
             />
           </div>
 
           <div className="form-actions">
-            <button type="button" className="btn btn-secondary" onClick={closeDialog}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleClose}
+            >
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary">
+            <button
+              type="submit"
+              className="btn btn-primary"
+            >
               Add Task
             </button>
           </div>
