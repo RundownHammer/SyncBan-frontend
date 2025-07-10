@@ -141,7 +141,7 @@ const Board: React.FC = () => {
   return (
     <div className="board">
       <div className="board-header">
-        <h1 className="board-title">📋 Live-ToDo</h1>
+        <h1 className="board-title">📋 SyncBan</h1>
         <div className="board-actions">
           <button className="btn btn-primary" onClick={openDialog}>
             ➕ Add Task

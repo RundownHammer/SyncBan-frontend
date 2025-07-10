@@ -11,7 +11,7 @@ const Header: React.FC = () => {
     <header className="header">
       <div className="header-content">
         <div className="header-left">
-          <h1 className="header-logo">📋 Live-ToDo</h1>
+          <h1 className="header-logo">📋 SyncBan</h1>
           {team && (
             <div className="header-team-info">
               <span className="team-badge">👥 {team.name}</span>

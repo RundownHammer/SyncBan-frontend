@@ -1,41 +1,46 @@
-import { useEffect, useRef } from 'react'
-import { io, Socket } from 'socket.io-client'
+import { useEffect, useState } from 'react'
+import { io, type Socket } from 'socket.io-client'
 import { useAuth } from '../context/AuthContext'
-import { SOCKET_URL } from '../config/api'
+
+const SOCKET_URL = import.meta.env.PROD 
+  ? 'wss://syncban-backend.onrender.com'  // Update with your actual Render URL
+  : 'http://localhost:5000'
 
 export const useSocket = () => {
-  const socketRef = useRef<Socket | null>(null)
-  const { token } = useAuth()
+  const [socket, setSocket] = useState<Socket | null>(null)
+  const { token, user } = useAuth()
 
   useEffect(() => {
-    if (token) {
-      // Connect to socket with authentication
-      socketRef.current = io(SOCKET_URL, {
-        auth: {
-          token
-        }
+    if (token && user) {
+      console.log('🔌 Connecting to socket:', SOCKET_URL)
+      
+      const newSocket = io(SOCKET_URL, {
+        auth: { token },
+        transports: ['websocket', 'polling']
       })
 
-      socketRef.current.on('connect', () => {
-        console.log('🟢 Connected to server')
+      newSocket.on('connect', () => {
+        console.log('✅ Socket connected')
       })
 
-      socketRef.current.on('disconnect', () => {
-        console.log('🔴 Disconnected from server')
+      newSocket.on('disconnect', () => {
+        console.log('❌ Socket disconnected')
       })
 
-      socketRef.current.on('error', (error) => {
-        console.error('❌ Socket error:', error)
+      newSocket.on('connect_error', (error) => {
+        console.error('❌ Socket connection error:', error)
       })
+
+      setSocket(newSocket)
 
       return () => {
-        if (socketRef.current) {
-          socketRef.current.disconnect()
-          socketRef.current = null
-        }
+        console.log('🔌 Cleaning up socket connection')
+        newSocket.close()
       }
+    } else {
+      setSocket(null)
     }
-  }, [token])
+  }, [token, user])
 
-  return socketRef.current
+  return socket
 }

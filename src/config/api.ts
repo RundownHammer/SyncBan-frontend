@@ -1,63 +1,53 @@
-export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
-  SOCKET_URL: import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000',
-  NODE_ENV: import.meta.env.VITE_NODE_ENV || 'development'
-}
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://syncban-backend.onrender.com' 
+  : 'http://localhost:5000'
 
-// Export individual constants for backward compatibility
-export const API_BASE_URL = API_CONFIG.BASE_URL
-export const SOCKET_URL = API_CONFIG.SOCKET_URL
+console.log('🌐 API Base URL:', API_BASE_URL)
+console.log('🔧 Environment:', import.meta.env.PROD ? 'production' : 'development')
 
-// Log configuration for debugging
-console.log('🌐 API Base URL:', API_CONFIG.BASE_URL)
-console.log('📡 Socket URL:', API_CONFIG.SOCKET_URL)
-
-// API endpoints - match your backend routes exactly
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: `${API_CONFIG.BASE_URL}/api/auth/login`,
-    REGISTER: `${API_CONFIG.BASE_URL}/api/auth/register`,
-    LOGOUT: `${API_CONFIG.BASE_URL}/api/auth/logout`,
-    PROFILE: `${API_CONFIG.BASE_URL}/api/auth/profile`
+    LOGIN: '/api/auth/login',
+    REGISTER: '/api/auth/register',
+    PROFILE: '/api/auth/profile'
   },
   TEAMS: {
-    CREATE: `${API_CONFIG.BASE_URL}/api/teams/create`,
-    JOIN: `${API_CONFIG.BASE_URL}/api/teams/join`,
-    LEAVE: `${API_CONFIG.BASE_URL}/api/teams/leave`,
-    MY_TEAM: `${API_CONFIG.BASE_URL}/api/teams/my-team`,
-    REGENERATE_CODE: `${API_CONFIG.BASE_URL}/api/teams/regenerate-code`
+    CREATE: '/api/teams/create',
+    JOIN: '/api/teams/join',
+    MY_TEAM: '/api/teams/my-team',
+    LEAVE: '/api/teams/leave',
+    REGENERATE_CODE: '/api/teams/regenerate-code'
   },
   TASKS: {
-    BASE: `${API_CONFIG.BASE_URL}/api/tasks`,
-    CREATE: `${API_CONFIG.BASE_URL}/api/tasks`,
-    UPDATE: (id: string) => `${API_CONFIG.BASE_URL}/api/tasks/${id}`,
-    DELETE: (id: string) => `${API_CONFIG.BASE_URL}/api/tasks/${id}`
+    BASE: '/api/tasks'
   }
 }
 
-// API request wrapper
-export const apiRequest = async (url: string, options: RequestInit = {}) => {
+export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem('token')
   
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` }),
-        ...options.headers
-      },
-      credentials: 'include'
-    })
+  const config: RequestInit = {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
+  }
 
+  console.log(`🌐 API Request: ${config.method || 'GET'} ${API_BASE_URL}${endpoint}`)
+
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, config)
+    
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({ message: 'Network error' }))
+      const errorData = await response.json().catch(() => ({ message: `HTTP ${response.status}` }))
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`)
     }
 
-    return await response.json()
+    return response.json()
   } catch (error) {
-    console.error('API request failed:', error)
+    console.error(`❌ API Error (${endpoint}):`, error)
     throw error
   }
 }

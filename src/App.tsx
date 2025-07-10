@@ -4,6 +4,7 @@ import { TeamProvider } from './context/TeamProvider'
 import AuthPage from './Components/auth/AuthPage'
 import Dashboard from './Components/Dashboard'
 import { useAuth } from './context/AuthContext'
+import './App.css'
 
 const AppContent: React.FC = () => {
   const { user, loading } = useAuth()

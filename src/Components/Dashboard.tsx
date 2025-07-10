@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
         <div className="header-left">
           <h1 className="dashboard-title">
             <span className="logo">🎯</span>
-            Live-ToDo
+            SyncBan
           </h1>
           {team && (
             <div className="team-info">
