@@ -52,3 +52,48 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
     throw error
   }
 }
+
+// Health check function to test backend connectivity
+export const checkServerHealth = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/health`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Add timeout for faster failure detection
+      signal: AbortSignal.timeout(10000) // 10 second timeout
+    })
+    
+    if (response.ok) {
+      console.log('✅ Server is healthy')
+      return true
+    } else {
+      console.log('❌ Server health check failed:', response.status)
+      return false
+    }
+  } catch (error) {
+    console.log('❌ Server health check error:', error)
+    return false
+  }
+}
+
+// Wait for server to be ready with exponential backoff
+export const waitForServer = async (maxRetries = 20, initialDelay = 1000): Promise<boolean> => {
+  for (let i = 0; i < maxRetries; i++) {
+    console.log(`🔄 Checking server health... (${i + 1}/${maxRetries})`)
+    
+    const isHealthy = await checkServerHealth()
+    if (isHealthy) {
+      return true
+    }
+    
+    // Exponential backoff with jitter
+    const delay = Math.min(initialDelay * Math.pow(1.5, i), 10000) + Math.random() * 1000
+    console.log(`⏳ Waiting ${Math.round(delay)}ms before next attempt...`)
+    await new Promise(resolve => setTimeout(resolve, delay))
+  }
+  
+  console.log('❌ Server health check failed after all retries')
+  return false
+}
