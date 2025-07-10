@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { DndContext, rectIntersection, type DragEndEvent } from '@dnd-kit/core'
 import Column from './Column'
-import type { Cards } from '../types'
+import type { Cards, CreateTaskData } from '../types'
 import AddTasksForm from './AddTasksForm'
 import { useSocket } from '../hooks/useSocket'
 import { useAuth } from '../context/AuthContext'
@@ -82,11 +82,27 @@ const Board: React.FC = () => {
     }
   }, [socket, fetchTasks])
 
-  const handleAddTask = async (newTask: Omit<Cards, '_id'>) => {
-    if (!socket) return
-
-    // Emit to socket for real-time sync
-    socket.emit('task:create', newTask)
+  const handleAddTask = (newTask: CreateTaskData) => {
+    console.log('🔥 handleAddTask called with:', newTask)
+    
+    const taskWithId: Cards = {
+      ...newTask,
+      _id: Date.now().toString(),
+      team: 'mock-team-id',
+      createdBy: 'current-user',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+    
+    console.log('📝 Task with ID:', taskWithId)
+    
+    setTodoItems(prev => {
+      const updated = [...prev, taskWithId]
+      console.log('✅ Updated todoItems:', updated)
+      return updated
+    })
+    
+    console.log('✅ Task should be added to UI')
   }
   
   const handleDelete = async (taskId: string) => {
@@ -118,9 +134,15 @@ const Board: React.FC = () => {
   }
 
   const openDialog = () => {
+    console.log('🎯 Opening dialog...')
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
+    console.log('📋 Dialog element:', dialog)
+    
     if (dialog) {
       dialog.showModal()
+      console.log('✅ Dialog opened')
+    } else {
+      console.error('❌ Dialog not found!')
     }
   }
 

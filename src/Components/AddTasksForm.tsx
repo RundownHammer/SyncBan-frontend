@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import type { Cards } from '../types'
+import type { CreateTaskData } from '../types'
 import '../styles/AddTasksForm.css'
 
 interface AddTasksFormProps {
-  addTask: (task: Omit<Cards, '_id'>) => void
+  addTask: (task: CreateTaskData) => void  // Use simpler interface
 }
 
 const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
@@ -16,41 +16,53 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!title.trim()) return
+    console.log('🚀 Form submitted!')
+    console.log('📋 Form data:', { title, description, priority, assignedTo, status })
+    
+    if (!title.trim()) {
+      console.error('❌ Title is required!')
+      alert('Please enter a task title')
+      return
+    }
 
-    const newTask: Omit<Cards, '_id'> = {
+    const newTask: CreateTaskData = {
       title: title.trim(),
       description: description.trim(),
       priority,
       status,
-      assignedTo: assignedTo.trim() || undefined,
-      team: '',
-      createdBy: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      assignedTo: assignedTo.trim() || undefined
     }
 
+    console.log('✅ Calling addTask with:', newTask)
     addTask(newTask)
     
     // Reset form
+    console.log('🔄 Resetting form...')
     setTitle('')
     setDescription('')
     setPriority('Medium')
     setAssignedTo('')
     
     // Close dialog
+    console.log('🔒 Closing dialog...')
+    const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
+    if (dialog) {
+      dialog.close()
+      console.log('✅ Dialog closed')
+    } else {
+      console.error('❌ Could not find dialog to close')
+    }
+  }
+
+  const handleClose = () => {
+    console.log('❌ Close button clicked')
     const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
     if (dialog) {
       dialog.close()
     }
   }
 
-  const handleClose = () => {
-    const dialog = document.querySelector('.add-tasks-dialog') as HTMLDialogElement
-    if (dialog) {
-      dialog.close()
-    }
-  }
+  console.log('🎨 AddTasksForm rendered')
 
   return (
     <dialog className="add-tasks-dialog">
@@ -73,7 +85,10 @@ const AddTasksForm: React.FC<AddTasksFormProps> = ({ addTask }) => {
               className="form-input"
               placeholder="Enter task title"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => {
+                console.log('📝 Title changed:', e.target.value)
+                setTitle(e.target.value)
+              }}
               required
             />
           </div>

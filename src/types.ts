@@ -19,17 +19,27 @@ export interface Team {
   updatedAt: string
 }
 
-export interface Cards {
-  _id: string
+// Add this interface for creating new tasks
+export interface CreateTaskData {
   title: string
-  description?: string
+  description: string
+  priority: 'High' | 'Medium' | 'Low'
   status: 'ToDo' | 'In Progress' | 'Done'
-  priority: 'Low' | 'Medium' | 'High'
   assignedTo?: string
-  team: string
-  createdBy: string
-  createdAt: string
-  updatedAt: string
+}
+
+// Keep the full Cards interface as is
+export interface Cards {
+  _id?: string
+  title: string
+  description: string
+  priority: 'High' | 'Medium' | 'Low'
+  status: 'ToDo' | 'In Progress' | 'Done'
+  assignedTo?: string
+  team?: string
+  createdBy?: string
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface AuthContextType {
