@@ -118,21 +118,16 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onServerReady }) => {
   return (
     <div className="loading-screen">
       <div className="loading-container">
-        {/* Animated Logo */}
+        {/* Simple Loading Spinner */}
         <div className="loading-logo">
           <div className="logo-circle">
             <span className="logo-emoji">🎯</span>
-          </div>
-          <div className="logo-rings">
-            <div className="ring ring-1"></div>
-            <div className="ring ring-2"></div>
-            <div className="ring ring-3"></div>
           </div>
         </div>
 
         {/* Loading Text */}
         <div className="loading-text">
-          <h1 className="loading-title">SyncBan</h1>
+          <h1 className="loading-title">PlanHive</h1>
           <p className="loading-subtitle" style={{ color: getStatusColor() }}>
             {loadingText}
           </p>
@@ -166,14 +161,14 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onServerReady }) => {
 
         {/* Floating Particles */}
         <div className="particles">
-          {[...Array(12)].map((_, i) => (
+          {[...Array(6)].map((_, i) => (
             <div 
               key={i} 
               className="particle"
               style={{
                 left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 4}s`,
-                animationDuration: `${4 + Math.random() * 4}s`
+                animationDelay: `${Math.random() * 6}s`,
+                animationDuration: `${6 + Math.random() * 4}s`
               }}
             />
           ))}

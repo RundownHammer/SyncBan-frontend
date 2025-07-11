@@ -1,14 +1,13 @@
-/* Improved Board Container */
+
 .board-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
   padding: 1rem;
   position: relative;
   overflow-x: hidden;
-  z-index: 1; /* Lower than header */
+  z-index: 1;
 }
 
-/* Combined Team Info Bar */
 .team-info-bar {
   background: rgba(30, 41, 59, 0.8);
   backdrop-filter: blur(20px);
@@ -101,19 +100,17 @@
   white-space: nowrap;
 }
 
-/* Board columns container - Desktop */
 .board-columns {
   display: flex;
   gap: 20px;
   justify-content: center;
   align-items: flex-start;
   overflow-x: auto;
-  padding-bottom: 120px; /* Space for floating action menu */
+  padding-bottom: 120px; 
   margin: 0 auto;
   max-width: 1400px;
 }
 
-/* Mobile Board Layout */
 .mobile-board {
   padding-bottom: 120px;
 }
@@ -124,7 +121,6 @@
   gap: 16px;
 }
 
-/* Improved Floating Action Menu */
 .floating-action-menu {
   position: fixed;
   bottom: 24px;
@@ -199,7 +195,6 @@
   transform: translateY(0);
 }
 
-/* No team message */
 .no-team-message {
   display: flex;
   justify-content: center;
@@ -217,7 +212,6 @@
   border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
-/* Add tasks dialog */
 .add-tasks-dialog {
   border: none;
   border-radius: 20px;
@@ -231,7 +225,6 @@
   backdrop-filter: blur(10px);
   z-index: 9999;
   overflow-y: auto;
-  /* Center the dialog properly */
   position: fixed;
   top: 50%;
   left: 50%;
@@ -244,7 +237,6 @@
   backdrop-filter: blur(5px);
 }
 
-/* Animation for modal */
 .add-tasks-dialog[open] {
   animation: modalSlideIn 0.3s ease-out;
 }
@@ -289,7 +281,6 @@
 .task-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
 }
 
 .form-group {
@@ -384,7 +375,6 @@
   transform: translateY(0);
 }
 
-/* Close button in top-right */
 .close-btn {
   position: absolute;
   top: 1rem;

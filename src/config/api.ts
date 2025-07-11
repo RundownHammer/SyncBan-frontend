@@ -1,5 +1,5 @@
 const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://syncban-backend.onrender.com' 
+  ? 'https://planhive-backend.onrender.com' 
   : 'http://localhost:5000'
 
 console.log('🌐 API Base URL:', API_BASE_URL)

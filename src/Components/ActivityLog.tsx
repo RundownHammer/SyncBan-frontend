@@ -93,7 +93,10 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ isOpen, onClose }) => {
 
         <div className="activity-log-content">
           {loading ? (
-            <div className="loading-spinner">Loading activities...</div>
+            <div className="loading-container">
+              <div className="loading-spinner-circle"></div>
+              <p className="loading-text">Loading activities...</p>
+            </div>
           ) : activities.length === 0 ? (
             <div className="no-activities">
               <p>No recent activities in this team.</p>

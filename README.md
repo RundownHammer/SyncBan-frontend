@@ -1,69 +1,147 @@
-# React + TypeScript + Vite
+# PlanHive Frontend 🎯
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The frontend application for PlanHive - a real-time collaborative Kanban board built with React, TypeScript, and modern web technologies.
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+# Install dependencies
+npm install
 
-## Expanding the ESLint configuration
+# Start development server
+npm run dev
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Open http://localhost:5173 in your browser
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🏗️ Built With
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Core Technologies
+- **React 19** - Latest React with concurrent features
+- **TypeScript** - Type-safe JavaScript development
+- **Vite** - Fast build tool and development server
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Key Libraries
+- **@dnd-kit** - Modern drag-and-drop for React
+- **Socket.IO Client** - Real-time WebSocket communication
+- **React Context** - State management for auth and teams
+
+### Development Tools
+- **ESLint** - Code linting and style enforcement
+- **TypeScript Compiler** - Type checking and compilation
+- **Hot Module Replacement** - Instant development feedback
+
+## 📁 Project Structure
+
 ```
+frontend/
+├── public/                   # Static assets
+├── src/
+│   ├── Components/          # React components
+│   │   ├── auth/           # Authentication components
+│   │   ├── team/           # Team management components
+│   │   ├── AddTasksForm.tsx  # Task creation form
+│   │   ├── Board.tsx        # Main Kanban board
+│   │   ├── Column.tsx       # Board columns
+│   │   ├── Dashboard.tsx    # Main dashboard layout
+│   │   ├── LoadingScreen.tsx # Server health checking
+│   │   ├── Task.tsx         # Individual task component
+│   │   └── TeamSetup.tsx    # Team creation/joining
+│   ├── context/             # React Context providers
+│   ├── hooks/               # Custom React hooks
+│   ├── styles/              # CSS stylesheets
+│   ├── utils/               # Utility functions
+│   ├── config/              # Configuration files
+│   └── types.ts             # TypeScript definitions
+├── package.json             # Dependencies and scripts
+├── tsconfig.json            # TypeScript configuration
+├── vite.config.ts           # Vite configuration
+└── eslint.config.js         # ESLint configuration
+```
+
+## 🎨 Features
+
+### 📱 Mobile-First Design
+- **Responsive Layout**: Optimized for all screen sizes
+- **Touch-Friendly**: Smooth drag-and-drop on mobile
+- **Adaptive UI**: Interface adjusts to device capabilities
+- **Mobile Dialogs**: Optimized forms for mobile interaction
+
+### 🔄 Real-Time Collaboration
+- **Live Updates**: See changes from team members instantly
+- **WebSocket Integration**: Real-time synchronization
+- **Conflict Resolution**: Smart handling of simultaneous edits
+- **User Presence**: Shows who's online in the team
+
+### 🎯 Task Management
+- **Drag & Drop**: Intuitive task movement between columns
+- **Bulk Operations**: Add multiple tasks at once
+- **Smart Assign**: Intelligent conflict resolution
+- **Activity Logging**: Track all task movements
+
+## 🔧 Development
+
+### Available Scripts
+```bash
+# Development
+npm run dev          # Start dev server with HMR
+npm run dev --host   # Expose dev server to network
+
+# Building
+npm run build        # Build for production
+npm run preview      # Preview production build
+
+# Code Quality
+npm run lint         # Run ESLint
+```
+
+### Environment Setup
+Create `.env` file:
+```env
+VITE_API_URL=http://localhost:5000
+VITE_NODE_ENV=development
+```
+
+## 🌐 API Integration
+
+### Configuration
+```typescript
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://planhive-backend.onrender.com' 
+  : 'http://localhost:5000'
+```
+
+### Real-Time Events
+- `taskUpdate` - Real-time task changes
+- `teamUpdate` - Team member changes  
+- `userJoined/userLeft` - Member activity
+
+## 🚀 Deployment
+
+### Build Process
+```bash
+npm run build
+npm run preview  # Test locally
+```
+
+### Recommended Platforms
+- **Netlify**: Easy GitHub integration
+- **Vercel**: Automatic deployments
+- **Manual**: Upload `dist/` folder
+
+## 🐛 Troubleshooting
+
+### Common Issues
+1. **Build Failures**: Clear `node_modules` and reinstall
+2. **TypeScript Errors**: Run `npx tsc --noEmit`
+3. **WebSocket Issues**: Check backend server status
+4. **Styling Issues**: Verify responsive breakpoints
+
+### Development Tools
+- React DevTools for component inspection
+- Network tab for API monitoring
+- Lighthouse for performance auditing
+
+---
+
+**PlanHive Frontend** - Beautiful, responsive, and fast! 🚀

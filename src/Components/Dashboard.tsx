@@ -75,7 +75,7 @@ const Dashboard: React.FC = () => {
           <div className="header-left">
             <h1 className="dashboard-title">
               <span className="logo">🎯</span>
-              SyncBan
+              PlanHive
             </h1>
           </div>
           
