@@ -7,7 +7,7 @@ interface LoadingScreenProps {
 
 const LoadingScreen: React.FC<LoadingScreenProps> = ({ onServerReady }) => {
   const [loadingStage, setLoadingStage] = useState(0)
-  const [loadingText, setLoadingText] = useState('Initializing SyncBan...')
+  const [loadingText, setLoadingText] = useState('Initializing PlanHive...')
   const [serverStatus, setServerStatus] = useState<'checking' | 'ready' | 'failed'>('checking')
   const [retryAttempt, setRetryAttempt] = useState(0)
 
