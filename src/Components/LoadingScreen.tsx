@@ -12,13 +12,13 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onServerReady }) => {
   const [retryAttempt, setRetryAttempt] = useState(0)
 
   const loadingStages = React.useMemo(() => [
-    'Initializing SyncBan...',
+    'Initializing PlanHive...',
     'Connecting to server...',
     'Checking server health...',
     'Establishing connection...',
     'Preparing your workspace...',
     'Almost ready...',
-    'Welcome to SyncBan! 🎯'
+    'Welcome to PlanHive! 🎯'
   ], [])
 
   useEffect(() => {
