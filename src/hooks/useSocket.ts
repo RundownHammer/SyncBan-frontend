@@ -3,7 +3,7 @@ import { io, type Socket } from 'socket.io-client'
 import { useAuth } from '../context/AuthContext'
 
 const SOCKET_URL = import.meta.env.PROD 
-  ? 'wss://syncban-backend.onrender.com'  // Update with your actual Render URL
+  ? 'https://planhive-backend.onrender.com'  // Updated to PlanHive backend URL
   : 'http://localhost:5000'
 
 export const useSocket = () => {
@@ -16,7 +16,12 @@ export const useSocket = () => {
       
       const newSocket = io(SOCKET_URL, {
         auth: { token },
-        transports: ['websocket', 'polling']
+        transports: ['websocket', 'polling'],
+        timeout: 20000,
+        forceNew: true,
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000
       })
 
       newSocket.on('connect', () => {
