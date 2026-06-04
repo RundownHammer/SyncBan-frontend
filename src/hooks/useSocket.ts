@@ -21,7 +21,8 @@ export const useSocket = () => {
         forceNew: true,
         reconnection: true,
         reconnectionAttempts: 5,
-        reconnectionDelay: 1000
+        reconnectionDelay: 1000,
+        withCredentials: true,
       })
 
       newSocket.on('connect', () => {
