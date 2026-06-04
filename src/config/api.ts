@@ -1,9 +1,7 @@
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://planhive-backend.onrender.com' 
-  : 'http://localhost:5000'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 console.log('🌐 API Base URL:', API_BASE_URL)
-console.log('🔧 Environment:', import.meta.env.PROD ? 'production' : 'development')
+console.log('🔧 Environment:', import.meta.env.VITE_NODE_ENV === 'production' ? 'production' : 'development')
 
 export const API_ENDPOINTS = {
   AUTH: {

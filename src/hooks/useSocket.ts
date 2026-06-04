@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { io, type Socket } from 'socket.io-client'
 import { useAuth } from '../context/AuthContext'
 
-const SOCKET_URL = import.meta.env.PROD 
+const SOCKET_URL = import.meta.env.VITE_NODE_ENV === 'production'
   ? 'https://planhive-backend.onrender.com'  // Updated to PlanHive backend URL
   : 'http://localhost:5000'
 

@@ -106,7 +106,7 @@ VITE_NODE_ENV=development
 
 ### Configuration
 ```typescript
-const API_BASE_URL = import.meta.env.PROD 
+const API_BASE_URL = import.meta.env.PROD
   ? 'https://planhive-backend.onrender.com' 
   : 'http://localhost:5000'
 ```
